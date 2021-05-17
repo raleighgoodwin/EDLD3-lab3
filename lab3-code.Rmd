@@ -9,23 +9,110 @@ output: html_document
 
 ## 1
 
+
 ## 2
+
 
 # Part B
 
 ## 1
 
 ```{r}
+missingdata <- function(x) {
+
+  l_na <- sum(is.na(x))
+
+  if(l_na == 1) {
+    warning("1 case of missing data was removed.")
+  }
+
+  if(l_na > 1) {
+    l_na <- sum(is.na(x))
+    warning(l_na, " cases of missing data were removed.")
+  }
+}
+
+meanx <- function(x) {
+  missingdata(x)
+  x1 <- x[!is.na(x)]
+  m <- sum(x1)/length(x1)
+  return(m)
+}
+
+### Attempt 2, trying to make the output more clean?
+
+missingdata2 <- function(x) {
+  l_na <- sum(is.na(x))
+}
+
+meanx2 <- function(x) {
+  
+  x1 <- x[!is.na(x)]
+  m <- sum(x1)/length(x1)
+  
+  if(missingdata2(x) == 1) {
+    warning(missingdata2(x), " case of missing data was removed.")
+    return(m)
+  }
+  
+  if(missingdata2(x) > 1) {
+    warning(missingdata2(x), " cases of missing data were removed.")
+    return(m)
+  }
+  
+  else{
+    return(m)
+  }
+}
 
 ```
 
 ## 2
 
 ```{r}
+example <- c(1, 2, 3, NA, 4, 5)
+example2 <- c(1, 2, 3, 4, NA, NA, NA, 7)
+example3 <- c(1, 2, 3, 4)
+
+missingdata(example)
+missingdata(example2)
+missingdata(example3)
+
+missingdata2(example)
+missingdata2(example2)
+missingdata2(example3)
+
+meanx(example)
+meanx(example2)
+meanx(example3)
+
+meanx2(example)
+meanx2(example2)
+meanx2(example3)
+
+mean(example, na.rm = TRUE)
+mean(example2, na.rm = TRUE)
+mean(example3, na.rm = TRUE)
+
+# I think both attempts work okay? The numeric output and warnings are correct, but I wish I could make it to where the output was displayed first and the warning second so it would look more clean?
 
 ```
 
 ## 3
+
+### Count number of missing elements in a vector: sum(is.na(airquality$Ozone))
+
+```{r}
+
+```
+
+### Proportional representation of each level (unique element) in a vector: purrr::map_dbl(split(mtcars$cyl, mtcars$cyl), length) / length(mtcars$cyl)
+
+```{r}
+
+```
+
+### Normalize or z-score a vector so the mean is zero and sd is one: (mtcars$mpg - mean(mtcars$mpg, na.rm = TRUE)) / sd(mtcars$mpg, na.rm = TRUE)
 
 ```{r}
 
@@ -34,7 +121,22 @@ output: html_document
 ## 4
 
 ```{r}
+iris[ , purrr::map_lgl(iris, is.numeric)]
 
+just_num <- function(df) {
+  if(sum(purrr::map_lgl(df, is.numeric)) == 0) {
+    stop("No numeric columns.")
+  }
+    else{
+      df1 <- df[ , purrr::map_lgl(df, is.numeric)]
+      df1
+    }
+}
+
+just_num(iris)
+
+dftest <- data.frame(uppercase = LETTERS[1:10], lowercase = letters[1:10])
+just_num(dftest) # good that it throws an error here as expected
 ```
 
 ## 5
