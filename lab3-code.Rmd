@@ -1,6 +1,6 @@
 ---
 title: "EDLD 3 Lab 3"
-author: "Raleigh Goodwin"
+author: "Raleigh Goodwin, Vinita Vader"
 date: "5/10/2021"
 output: html_document
 ---
@@ -9,7 +9,40 @@ output: html_document
 
 ## 1
 
-## 2
+The three parts of a function are the body, the formals, and the environment. (need to describe each??**)
+- The `body()` consists of the code which is written inside the function. 
+- The `formals()` consists of the argument(s) used in the function which also control how we call the function. These are also the parts of the function which can be seen as input and parameters that regulate the input.
+- The `environment()` is the location of the function's variable 
+```{r}
+#Example function
+f <- function(x) x^4
+
+#Let's look at the body for f
+body(f)
+
+#Let's look at the formals for f
+formals(f)
+
+#Let's look at the environment for f
+environment(f)
+```
+
+
+## 2. Describe three different ways functions can be stored/applied and an example of when you might want to use each version.
+
+- Stored in the global environment - function has to work only for the current workflow.
+
+- Generalized use - function has to work for multiple workflows; it should include meaningful warnings and messages, should be able to deal with different types of inputs (eg., dataframes, tibbles). Other people can use it through a Github repo. 
+
+- Build the function into a package - function has to have all the properties mentioned in the previous two settings but also be reproducible for people across settings. It needs to have documentation for the arguments used; one should be able to access all the output without having to load (hopefully!) any other library. 
+
+#### Were not sure if the following information was also needed for this question. 
+
+- Functions like `mean()` that we already know of  
+- Functions we don't usually name - like `vapply()`
+- Pull out specific coefficients - `fit$p.value()`
+- Functions that use other functions or loop them `map_df(vector, map())`
+
 
 # Part B
 
@@ -23,12 +56,59 @@ output: html_document
 
 ```{r}
 
+
 ```
 
 ## 3
 
+### Count number of missing elements in a vector: sum(is.na(airquality$Ozone))
+
+```{r}
+count_na <- function(x) {
+  l_na <- sum(is.na(x))
+  l_na
+}
+
+count_na(airquality$Ozone) == sum(is.na(airquality$Ozone))
+count_na(c(NA, NA, NA, NA, 87, 92, 100, NA))
+count_na(c("yes", "no", NA))
+count_na(c(1, 2))
+count_na(c("yes"))
+```
+
+### Proportional representation of each level (unique element) in a vector: 
+
 ```{r}
 
+purrr::map_dbl(split(mtcars$cyl, mtcars$cyl), length) / length(mtcars$cyl)
+
+#Specify both dataframe and var
+#figure out why the following code doesn't work, how does the function split work here, if I only do split(mtcars, mtcars$cyl) - gives me the same output for all 3
+#rep.level = function(df,var){
+#  purrr::map_dbl(split(df$var, df$var), length) / length(df$var)
+#}
+#rep.level(df = mtcars, cyl)
+
+#Specify var only
+rep.level = function(x){
+  purrr::map_dbl(split(x, x), length) / length(x)
+}
+
+rep.level(mtcars$cyl)
+
+
+```
+
+### Normalize or z-score a vector so the mean is zero and sd is one: (mtcars$mpg - mean(mtcars$mpg, na.rm = TRUE)) / sd(mtcars$mpg, na.rm = TRUE)
+
+```{r}
+zscore <- function(x) {
+  (x - mean(x, na.rm = TRUE)) / (sd(x, na.rm = TRUE))
+}
+
+zscore(mtcars$mpg) == ((mtcars$mpg - mean(mtcars$mpg, na.rm = TRUE)) / sd(mtcars$mpg, na.rm = TRUE))
+zscore(c(1, 2, 3, 4, 5))
+zscore(c("yes"))
 ```
 
 ## 4
@@ -40,6 +120,13 @@ output: html_document
 ## 5
 
 ```{r}
+sumdf <- function(x) {
+  Column_Means <- apply(just_num(x), 2, mean, na.rm = TRUE)
+  Column_Standard_Deviations <- apply(just_num(x), 2, sd, na.rm = TRUE)
+  data.frame(Column_Means, Column_Standard_Deviations)
+}
+
+sumdf(iris)
 
 ```
 
